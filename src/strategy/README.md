@@ -1,4 +1,13 @@
 # Strategy Pattern
+## Definition
+> Strategy pattern defines a family of algorithms, encapsulating each one, and makes them interchangeable. Strategy 
+> lets the algorithm very independently from clients that use it.
+
+## Design principles
+* [Encapsulate what varies](https://github.com/woojiahao/design-patterns/tree/master/src/strategy#leveraging-encapsulation)
+* [Favor composition over inheritance](https://github.com/woojiahao/design-patterns/tree/master/src/strategy#wrapping-up)
+* [Program to interfaces, not implementations](https://github.com/woojiahao/design-patterns/tree/master/src/strategy#adding-more-flexibility)
+
 ## Scenario
 A duck super class (`AbstractDuck`) holds onto information that all Duck children should have, such as `quack()` which 
 are pieces of information relating to the Duck. Each subclass of the `AbstractDuck` will extend this parent and 
@@ -54,10 +63,10 @@ class MallardDuck extends AbstractDuck {
 ```
 
 > Although the use of inheritance improved a potential situation with reuse, it caused the program to be less 
-maintainable.
+> maintainable.
 
 Another problem soon arises, and when new types of Ducks are added, they introduce corner cases that require a lot of 
-fiddling with the code to fit into our existing solution built upon by inheritance. For instance, if a user decides to
+fiddling with the code to fit into our existing solution built upon inheritance. For instance, if a user decides to
 add a `RubberDuck` to the list of children.
 
 ```java
@@ -115,7 +124,7 @@ to the methods even if the general idea remains unchanged.
     This problem also appears when mimicking Ducks like the `RubberDuck`, where a certain method will not perform any
     action. 
     
-    > Is it really that smart to have so much duplicated code? Wasn't the point of using inheritance to reduce the 
+    Is it really that smart to have so much duplicated code? Wasn't the point of using inheritance to reduce the 
     amount of code duplication we have to perform?
 
 ### Using interfaces?
@@ -211,7 +220,7 @@ class MallardDuck extends AbstractDuck {
 }
 
 class RubberDuck extends AbstractDuck {
-  MallardDuck() {
+  RubberDuck() {
     flyBehavior = new FlyNoWay();
   }
 }
@@ -251,8 +260,8 @@ In both scenarios, the term `interface` simply refers to the polymorphic behavio
 to allow a supertype to be assigned to subtypes so that the actual runtime code isn't locked in to a specific 
 implementation.
 
-To address the issue of **1**, we can introduce setters for the behaviors in `AbstractDuck` so that users can change
-the behaviors during runtime if necessary.
+To address the first issue, we can introduce setters for the behaviors in `AbstractDuck` so that users can change the 
+behaviors during runtime if necessary.
 
 ```java
 abstract class AbstractDuck {
@@ -270,3 +279,19 @@ public static void main(String[] args) {
   mDuck.fly(); // Should be FlyNoWay implementation
 }
 ```
+
+### Wrapping up
+Instead of looking at this program as a set of behaviors, it can be thought of as a family of algorithms, where the 
+program represents the various things the duck can do.
+
+In fact, what we have performed is to **favor composition over inheritance**. **Composition** refers to a *HAS-A* 
+relationship whereas **inheritance** refers to a *IS-A* relationship. Instead of a Duck inheriting some set of behavior,
+the Duck is composed of this set of behavior.
+
+> Favor composition over inheritance
+
+By favoring composition, we also made the program more flexible as now it isn't programmed to an implementation but
+rather programmed to an interface where the behaviors can be changed during runtime if necessary.
+
+Applying this design pattern has enabled us to create a program that is not only easy to setup but also easy to 
+maintain, establishing a balance between clever design and a practical one.
