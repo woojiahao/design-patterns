@@ -280,6 +280,41 @@ public static void main(String[] args) {
 }
 ```
 
+### Cleaning up code
+Since the `AbstractDuck` class no longer requires sub classes to inherit abstract methods, it can be stripped of the 
+abstract class naming convention. We also properly encapsulate the name variable.
+
+```java
+class Duck {
+  private IFlyableBehavior flyBehavior;
+  private IQuackableBehavior quackBehavior;
+  private String name;
+
+  Duck(String name, IFlyableBehavior flyBehavior, IQuackableBehavior quackBehavior) {
+    this.name = name;
+    this.flyBehavior = flyBehavior;
+    this.quackBehavior = quackBehavior;
+  }
+
+  void quack() {
+    quackBehavior.quack(name);
+  }
+
+  void fly() {
+    flyBehavior.fly(name);
+  }
+
+  void setFlyBehavior(IFlyableBehavior flyBehavior) {
+    this.flyBehavior = flyBehavior;
+  }
+
+  void setQuackBehavior(IQuackableBehavior quackBehavior) {
+    this.quackBehavior = quackBehavior;
+  }
+}
+
+```
+
 ### Wrapping up
 Instead of looking at this program as a set of behaviors, it can be thought of as a family of algorithms, where the 
 program represents the various things the duck can do.
