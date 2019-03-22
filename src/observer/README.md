@@ -4,7 +4,7 @@
 > dependents are notified and updated automatically.
 
 ## Design principles
-* [Strive for loosely coupled designs between objects that interact](https://github.com/woojiahao/design-patterns/tree/master/src/observer#scenario)
+* [Strive for loosely coupled designs between objects that interact](https://github.com/woojiahao/design-patterns/tree/master/src/observer#loose-coupling)
 
 ## Scenario
 We are building a weather station application and we have set up a system to receive atmospheric data when it changes.
