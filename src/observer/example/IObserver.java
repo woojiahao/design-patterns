@@ -1,5 +1,5 @@
 package observer.example;
 
 public interface IObserver {
-  void notifyObserver();
+  void update(float temperature, float humidity, float pressure);
 }
