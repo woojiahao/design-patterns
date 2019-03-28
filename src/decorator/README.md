@@ -4,7 +4,7 @@
 > alternative to subclassing for extending functionality.
 
 ## Design principles
-* Classes should be open for extension, but closed for modification 
+* [Classes should be open for extension, but closed for modification](https://github.com/woojiahao/design-patterns/tree/master/src/decorator#separating-condiments) 
 
 ## Scenario
 Say we begin developing a coffee shop system and we start with having a base parent class called `Beverage` for all 
@@ -171,7 +171,11 @@ scenario would be the `Cream`. Then, the call stack would propagate to each clas
 until it reaches the original base object, where everything gets returned up again.
 
 ```
-Cream (cost()) -> Mocha (cost()) -> DarkRoast (cost() + returns baseCost) -> Mocha (adds condiment to baseCost) -> Cream (adds condiment to baseCost)
+Cream (cost()) 
+  -> Mocha (cost()) 
+    -> DarkRoast (cost() + returns baseCost) 
+      -> Mocha (adds condiment to baseCost) 
+        -> Cream (adds condiment to baseCost)
 ```
 
 From this, we know several things about the decorator pattern:
@@ -183,3 +187,150 @@ From this, we know several things about the decorator pattern:
 * The decorator adds its own behaviour either before and/or after delegating to the object it decorates to do the rest
   of its job
 * Objects can be decorated at any time, even during runtime
+
+### Designing decorators!
+
+Each decorator created has a **HAS-A** relationship to the supertype, holding a reference to this. In our scenario, the
+base decorator will represent the condiments that drinks can have.
+
+```java
+class CondimentDecorator extends Beverage {
+  private Beverage wrapped;
+
+  CondimentDecorator(Beverage wrapped) {
+    this.wrapped = wrapped;
+  }
+}
+```
+
+The other drinks remain as subclasses of the `Beverage` class whilst each individual condiment subclasses the 
+`CondimentDecorator` class instead.
+
+```java
+class Milk extends CondimentDecorator { }
+
+class Whip extends CondimentDecorator { }
+```
+
+And now you might be wondering, isn't this already violating the OG design principle of "Favour composition over 
+inheritance". The answer to that is both yes *and* no. Whilst we are building the system upon inheritance, it is an
+appropriate use case for it and we do not solely rely on inheritance to get the job done. We intentionally include a 
+**HAS-A** relationship between the decorator and the supertype by holding an instance of this supertype within itself.
+The code is free from modifications after the fact and we can always add more condiments or beverage types without 
+touching the original `Beverage` class. 
+
+### Tying it all together
+Now that we have a general understanding of the decorator pattern and how it ties into our application, we can start to 
+implement it.
+
+We first start by building out the base `Beverage` class, nothing much has changed since the last time.
+
+```java
+abstract class Beverage {
+  private String description;
+
+  Beverage(String description) {
+    this.description = description;
+  }
+
+  String getDescription() { return description; }
+
+  abstract double cost();
+}
+```
+
+Then, we create our decorator for condiments, `CondimentDecorator`. Here, we intentionally set the `getDescription()`
+method to be abstract as we want each condiment subtype to implement their own version of it.
+
+```java
+abstract class CondimentDecorator extends Beverage {
+  CondimentDecorator(String description) { super(description); }
+
+  abstract String getDescription();
+}
+```
+
+We can then begin to build the various beverages.
+
+```java
+class Espresso extends Beverage {
+  Espresso() { super("Espresso"); }
+
+  @Override public double cost() { return 1.99; }
+}
+
+class HouseBlend extends Beverage {
+  HouseBlend() { super("House Blend"); }
+
+  @Override public double cost() { return 0.89; }
+}
+```
+
+Up till now, most of our code remains fairly untouched, with most just a repeat of the original design. But now that we
+have the `CondimentDecorator` class, we can exploit the decorator pattern and begin adding condiments. 
+
+```java
+class Whip extends CondimentDecorator {
+  private Beverage beverage;
+
+  Whip(Beverage beverage) { 
+    super("Whip");
+    this.beverage = beverage;
+  }
+
+  @Override public String getDescription() {
+    return beverage.getDescription() + ", Mocha";
+  }
+
+  @Override public double cost() {
+    return beverage.cost() + 0.20;
+  }
+}
+```
+
+Notice how we rely on the given `beverage`'s prior value to build upon what the condiment's cost and description is.
+This gives us the ability to backtrack through a whole set of nesting to retrieve the necessary information for our use.
+
+Let's see how we can use this new system...
+
+```java
+Beverage espresso = new Espresso();
+System.out.println(espresso.getDescription());
+
+Beverage houseBlend = new HouseBlend();
+houseBlend = new Whip(houseBlend);
+houseBlend = new Mocha(houseBlend);
+System.out.println(houseBlend.getDescription());
+
+> Espresso
+> House Blend, whip, mocha
+```
+
+As you can see, the `houseBlend` beverage is decorated with various condiments that reflects when retrieving the 
+description.
+
+### Decorative flaws...
+Whilst the decorator pattern is quite versatile, it comes with a bevy of flaws.
+
+* **Modifying the base beverages** - if we decide that the `Espresso` will have a discount, this discount is not going 
+  to be properly propagated to any condiments that decorate it, which restricts our application
+* **Managing more objects** - introducing the decorator pattern and way of thinking causes us to have a management
+  problem on our hands as we have to now think about the ordering of the decorations etc, however, this can be resolved
+  since most applications of the decorator pattern is backed by other design patterns
+* **Parsing descriptions** - if we have a special formatting for our descriptions, it will take some reworking to 
+  implement it, for instance, if we have 2 occurrences of `Mocha` in the decorated object, we would want to have the 
+  string `Double Mocha` instead of `Mocha, Mocha`
+* **Too many decorations** - as the number of decorators increase, so does the complexity of the application as it gets
+  harder for the developer to know exactly what to decorate their objects with in order to achieve the behavior they
+  want
+
+### I/O decorations!
+Now let's explore some uses of the decorator pattern within the Java API, more specifically, how it is used with the
+I/O API, starting with `FileInputStream`. 
+
+`FileInputStream` provides a base for all other I/O components. It is decorated by these other components to extend its
+functionality. So what exactly are the components that decorate the `FileInputStream`? Well, for this demonstration, 
+we are looking at the base decorator class of `FilterInputStream` with subclasses like `BufferedInputStream` and 
+`DataInputStream`.
+
+The book goes into detail about creating a custom `FilterInputStream` which can be found in the folder `io`.
