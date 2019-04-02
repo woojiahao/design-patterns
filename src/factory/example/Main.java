@@ -7,11 +7,11 @@ import factory.example.pizzastore.PizzaStore;
 public class Main {
   public static void main(String[] args) {
     PizzaStore nyStore = new NYPizzaStore();
-    nyStore.orderPizza("cheese");
+    nyStore.orderPizza(PizzaType.CHEESE);
 
     System.out.println();
 
     PizzaStore chicagoStore = new ChicagoPizzaStore();
-    chicagoStore.orderPizza("cheese");
+    chicagoStore.orderPizza(PizzaType.CHEESE);
   }
 }

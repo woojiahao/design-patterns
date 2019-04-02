@@ -1,9 +1,10 @@
 package factory.example.pizzastore;
 
+import factory.example.PizzaType;
 import factory.example.pizza.Pizza;
 
 public abstract class PizzaStore {
-  public Pizza orderPizza(String type) {
+  public Pizza orderPizza(PizzaType type) {
     Pizza pizza = createPizza(type);
     pizza.prepare();
     pizza.bake();
@@ -12,5 +13,5 @@ public abstract class PizzaStore {
     return pizza;
   }
 
-  abstract Pizza createPizza(String type);
+  abstract Pizza createPizza(PizzaType type);
 }
