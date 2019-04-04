@@ -1,28 +1,27 @@
 package factory.example.pizza;
 
-import java.util.Arrays;
+import factory.example.ingredients.Pepperoni;
+import factory.example.ingredients.cheese.Cheese;
+import factory.example.ingredients.clam.Clam;
+import factory.example.ingredients.dough.Dough;
+import factory.example.ingredients.sauce.Sauce;
+import factory.example.ingredients.veggie.Veggie;
+
 import java.util.List;
 
 public abstract class Pizza {
   private String name;
-  private String dough;
-  private String sauce;
+
+  protected Dough dough;
+  protected Cheese cheese;
+  protected Clam clam;
+  protected Sauce sauce;
+  protected Veggie[] veggies;
+  protected Pepperoni pepperoni;
+
   private List<String> toppings;
 
-  public Pizza(String name, String dough, String sauce, String... toppings) {
-    this.name = name;
-    this.dough = dough;
-    this.sauce = sauce;
-    this.toppings = Arrays.asList(toppings);
-  }
-
-  public void prepare() {
-    System.out.println("Preparing " + name);
-    System.out.println("Tossing dough...");
-    System.out.println("Adding sauce...");
-    System.out.println("Adding toppings:");
-    toppings.forEach(topping -> System.out.println("\t" + topping));
-  }
+  abstract public void prepare();
 
   public void bake() {
     System.out.println("Bake for 30 minutes at 350");
@@ -34,5 +33,13 @@ public abstract class Pizza {
 
   public void box() {
     System.out.println("Place pizza in official PizzaStore box");
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 }
