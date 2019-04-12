@@ -5,6 +5,8 @@ book.
 ## Navigation
 1. [Strategy pattern](https://github.com/woojiahao/design-patterns/tree/master/src/strategy)
 2. [Observer pattern](https://github.com/woojiahao/design-patterns/tree/master/src/observer)
+3. [Decorator pattern](https://github.com/woojiahao/design-patterns/tree/master/src/decorator)
+4. [Factory pattern](https://github.com/woojiahao/design-patterns/tree/master/src/factory)
 
 ## Why learn/use design patterns?
 Design patterns provide a shared vocabularies for developers to share their ideas. This ensures that regardless of who 
